@@ -50,6 +50,9 @@ variable lengthPossibleWords, length of the possibleWords array
 variable currentOptimalGUess, tracks the index of the current optimal word (in the possibleWords array) whilst the possibleWords array is fed into getNextWord
 Array tilePermutations, stores possible tile color permutations (i.e, 'ygbbb')
 variable currentTilePermutation = 0
+variable runningEvCount = 0, stores evCount whilst looping over tilePermutations in getEvCount
+variable runningConsistentWords = 0, stores number of consistent words whilst looping over possibleWords in getNumConsistentWords
+variable consistencyCheck = 0, stores whether word is conistent or inconsistent, within function isConsistent
 
 Algorithm for wrapper function
 
@@ -90,11 +93,14 @@ algorithm for getNextWord(enteredWords, returnedBYG, fiveLetterWordLibrary, poss
     evCount = getEvCount(possibleWords[i],possibleWords)
     if (evCount < bestEvCount) then set bestEvCount = evCOunt and currentOptimalGuess = i
     Otherwise do nothing
+
+    end for loop
+
     Function returns possibleWords[i]
 
 End algorithm
 
-## getNUmberRemainingPossibleWords function
+## getEvCount function
 
 function getEvcount(testWord, possibleWords)
 
@@ -110,17 +116,107 @@ this will give a contribution of 1/y for all testWords. This shouldn't change an
 
 algorithm for getEvCount(testWord, possibleWords)
 
-
-
     for loop, initialisation i = 0, condition i < lengthTilePermutations, increment i + 1
+
     set currentTilePermutation = tilePermutations[i]
+    runningEvCount = runningEvCount + (getNumConsistentWords (testWord, currentTilePermutation, possibleWords))^2/lengthPossibleWords
+
+    end for loop
+
+    function returns running evCount
+
+## getNumConsistentWords function
+
+function getNumConsistentWords(testWord, currentTilePermutation, possibleWords)
+
+takes a test word, a set of tile information as input (i.e. five letter string representing color information 'ygbgb'), and the remaining possible words
+and counts how many of the possibleWords array are consistent with the test word and that tile information.
+
+The first version will be slow on computing time, so lets just compare the testWord and currentTilePermutation to one word at a time in possible words. So we need to figure a way to compare testWord to a single word in possibleWords, and tell if it is consitent with test word and currentTilePermutation. currentTilePermutation gives us rules: if we have blanks, they tell us that the possibleWord can't have those letters. If we have yellows, these tell us the PossibleWord must have that letter, if we have greens that tells us the possible word must have that letter in that location. We can take each letter of testWord and apply the rule suggested by that letter and the corresponding index of currentTilePermutation, to the word we are comparing to, to see if it is consistent with that rule. (although we will
+need to be careful for testWords that contain repeat letters, as there are some nuances here). So say we have the word 'alert' and 'bgybg'. The first b implies the possible word must not contain the 'a', so we apply that rule. if it were y in letter 1, we must check that the possible word does contain
+'a', if it were g in letter 1, the possible word must contain 'a' as its first letter. I can see that this algorithm is going to take lots of computing 
+time to run, but that there will be some really interesting ways to speed it up (for example, what order to apply rules? we would decide on what is most likely to rule a word out).
+
+Algorithm for method as described above
+
+getNumConsistentWords(testWord, currentTilePermutation, possibleWords)
+
+    for loop, initialisation i = 0, conditon i < lengthPossibleWords, increment i + 1
+
+    runningConsistentWords = runningConsistentWords + isConsistent(testWord, currentTilePermutation, possibleWords[i])
+
+    end for loop
+
+    return runningConsistentWords
+
+End function
 
 
+## function isConsistent(testWord, currentTilePermutation, compareWord)
 
+This function will take testWord (string), and currentTilePermutation (string), and will output 1 if compareWord is consistent with that testWord/
+currentTilePermutation and 0 otherwise. I'll first write an algorithm for the case where we don't have repeating letters, and then the case where 
+we do have repeating letters (more nuanced)
 
+Algorithm for isConsistentNoRepeats.
 
+isConsistent algorithm (not considering testWord with repeating letters)
 
+    for loop, initialisation i = 0, condition i < 5, increment i + 1
 
+        let consistencyCheck = 0
+        if currentTilePermutation[i] == b then if compareWord.includes(testWord[i]) is true exit loop
+        if currentTilePermutation[i] == y then if compareWord.includes(testWord[i]) is false or compareWord[i] == testWord[i] is true exit loop
+        if currentTilePermutation[i] == g then if compareWord[i] == testWord[i] is false exit loop
+        otherwise consistencyCheck = 1
 
+    end for loop
 
+    return consistencyCheck
 
+I've written this in code and I'm going to try this out and test computing time. I've implemented an isConistent function that takes 111 seconds to run
+243 million comparisons (which is an 1000 remaining words case, as described above). Lot's of optimisation to do but not impossible i think!
+
+Why repeated letters can cause issues:
+
+say you enter the word 'petty' and the word is 'trait'. you would get
+two yellows for 'bbyyb'. But a word like 'triii' shouldn't be consistent and
+the above algorithm would say it is. The isConsistent algorithm isn't working
+for situations where you have multiple of the same letters returning yellows. 
+The world game works so that it only gives you a yellow if you haven't already been given a yellow or green for all the instances
+of that letter contained in the solution.
+
+To check whether we need to deal with this nuanced case, we should check for if the word contains a repeat letter.
+strictly speaking we could narrow this condition down but for now I'm just going to go for this wide condition
+as it would catch any problem case (optimisation later).
+
+I've had a think about ways to deal with all the possible nuances of repeated letters, and the problem really boils down to the fact
+that letters everywhere in the word are still 'active' or 'present' to the .includes() searches for the second condition
+of isConsistent, even if they have already been 'used' by a green or yellow tile. So a simple solution to this
+is to change tiles after they have been 'used' to a '$' so that they are no longer active in the word. There is one
+added complexity, when dealing with a yellow, I will need to avoid changing tiles to '$' if they correspond to a 'g' 
+in currentTilePermutation, as this would break the subsequent 'g' check. I'd need to remove other tiles with the same
+letter that don't correspond to a 'g'.
+
+Algorithm for isConsistentWithRepeats (now considering edge cases with repeated letters)
+
+isConsistentWithRepeats
+
+    for loop, initialisation i = 0, condition i < 5, increment i + 1
+
+        let consistencyCheck = 0
+        if currentTilePermutation[i] == b then if compareWord.includes(testWord[i]) is true exit loop
+
+        if currentTilePermutation[i] == y then if compareWord.includes(testWord[i]) is true and compareWord[i] == testWord[i] is false
+        then alter the compare word exchanging a tile with the same letter as testWord[i] that isn't in an index corresponding to a 'g'
+        with a '$' symbol
+        otherwise exit loop
+
+        if currentTilePermutation[i] == g then if compareWord[i] == testWord[i] is true, then exchange compareWord[i] with a '$' sign
+        otherwise exit loop
+
+        otherwise consistencyCheck = 1
+
+    end for loop
+
+    return consistencyCheck
