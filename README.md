@@ -96,7 +96,7 @@ algorithm for getNextWord(enteredWords, returnedBYG, fiveLetterWordLibrary, poss
 
     end for loop
 
-    Function returns possibleWords[i]
+    Function returns possibleWords[currentOptimalGuess]
 
 End algorithm
 
@@ -220,3 +220,86 @@ isConsistentWithRepeats
     end for loop
 
     return consistencyCheck
+
+
+## Generating tilePermutations
+
+tile permutations is an array storing all the possible permutations of tile information, each permutation as a string. 
+For example 'ggggg', 'yyyyy','ybygy' etc. There are 3^5 permutations. I'm going to design a function that can build this
+array.
+
+Plan - ideas
+
+For permutations, order matters. They work in the same way as a confusingly named 'combination' lock. If you have a combination
+lock with 3 slots, and 0-9 in each slot, you have 10^3 permutations (i.e. 1,000). These can be formed in a systematic way by
+considering the 'total' number and going from 000 to 999 in incremental steps. I.e. 001, 002, etc.
+
+I think we can take a similar approach for this problem. We have 5 slots, each can take any of three letters. We can choose 
+'g' as the base (i.e. equivalent to 0), 'y' as equivalent to 1, and 'b' as equivalent to 2. Then we can work in incremental
+steps from 'ggggg' to 'bbbbb'. So this would be 'ggggg', 'ggggy', 'ggggb', 'gggyg', 'gggyy','gggyb', 'gggbg' etc.
+
+So the algorithm just needs to systematize this process. I think we could do this with 5 for loops, I'll go with this for now 
+it may not be the most elegant solution but it should work.
+
+Plan - workings
+
+The algorithm will work with a for loop. The loop will have actions associated with one of the 5 slots of the permutation string.
+The algorithm will start with a tilePermutations array with the 'ggggg' string in the first index. 
+The algorithm will work on a string 'activePermutation', each step will alter this by one character, and then push the 
+resulting activePermutation as the next index of tilePermutations array. 
+The first loop will change this to 'ggggy' and push this string to form the second index of the tilePermutations
+array. The loop will need to change the last slot every time, the second slot will need to change every 3rd time, the third
+slot will need to change every 9th time etc. All the way up to the fifth slot that will need to change every 81 times
+
+## getTilePermutations algorithm
+
+getTilePermutations()
+
+tilePermutations = array containing one element 'ggggg'
+activePermutation = 'ggggg'
+
+for loop ,initlialisation i = 1, condition i <243, increment i + 1
+
+activePermutation[4]=='g'? replce active Permutation[4] with 'y': 
+activePermutation[4]=='y'? replace active Permutation [4] with 'b':
+replace active Permutation[4] with 'g'
+
+if (i % 3 == 0){
+
+activePermutation[3]=='g'? replce active Permutation[3] with 'y': 
+activePermutation[3]=='y'? replace active Permutation [3] with 'b':
+replace active Permutation[3] with 'g'
+
+}
+
+if (i% 9 == 0) {
+
+activePermutation[2]=='g'? replce active Permutation[2] with 'y': 
+activePermutation[2]=='y'? replace active Permutation [2] with 'b':
+replace active Permutation[2] with 'g'
+
+}
+
+if (i% 27 == 0) {
+
+activePermutation[1]=='g'? replce active Permutation[1] with 'y': 
+activePermutation[1]=='y'? replace active Permutation [1] with 'b':
+replace active Permutation[1] with 'g'
+
+}
+
+if (i% 81 ==0){
+
+activePermutation[0]=='g'? replce active Permutation[0] with 'y': 
+activePermutation[0]=='y'? replace active Permutation [0] with 'b':
+replace active Permutation[0] with 'g'
+
+}
+
+push activePermutation to tilePermutations
+
+
+
+}
+
+
