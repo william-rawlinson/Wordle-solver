@@ -1,6 +1,6 @@
-# My From-scratch Wordle Solver
+# My Wordle Solver
 
-I built a js script to solve the popular puzzle game Wordle. This was to test problem solving strategies I've learned in the Project Odin Foundation Course.
+I built an application to solve the popular puzzle game 'Wordle' in JavaScript. This was to test problem solving strategies I've learned in the Project Odin Foundation Course.
 
 ## What is 'Wordle'?
 
@@ -12,15 +12,15 @@ Wordle is an online game developed by the New York Times that is designed to tes
 
 I wanted to create an effective solver that was close to an optimal strategy. After some thinking I chose the following principle as the basis for my solver:
 
-My solver will minimises the expected number of possible solution words after the guess has been made
+    My solver will minimise the expected number of possible solution words after each guess has been made
 
-The reasoning behind this principle is that at the start of each turn, each of the remaining possible words are equally likely to be the solution. Therefore, to have the best chance of guessing the solution, the solver should minimise the number of remaining possible words after the guess. 
+The reasoning behind this principle is that at the start of each turn, each of the remaining possible words are equally likely to be the solution. Therefore, to have the best chance of guessing the solution, the solver should minimise the number of remaining possible words after each guess. As a simplification, I chose to rely on 'one-turn thinking'. This means that the solver would not try and think more than one turn ahead when choosing the next word. For version 1 of the solver, I aimed to produce a function that the user could interact with in a web browser's developer tool console. For future versions, I aim to add a UI so that the user can interact with the solver in a web browser.
 
-As a simplification, I chose to rely on 'one-turn thinking'. This means that the solver would not try and think more than one turn ahead when choosing the next word. For version 1 of the solver, I aimed to produce a function that the user could interact with in a web browser's developer tool console. For future versions, I aim to add a UI so that the user can interact with the solver in a web browser.
+## Results
 
-Details of my working are provided below
+Version 1 of my solver has performed very well. I've used the solver 4 times, and have found the solution in 2 guesses, 3 guesses, 4 guesses, and 3 guesses, respectively. My solver has identified the word 'lares' as the optimal first guess. This is an obscure word referring to guardian deities in ancient Roman religion.
 
-## Functionality plan
+# Detailed Working Below
 
 I'm going to assume that I can find an optimal first turn word 
 choice (as this will be the same every time) outside of this algorithm.
