@@ -1,23 +1,24 @@
-# original-wordle-bot
+# My From-scratch Wordle Solver
 
-Attempt to produce a bot that can solve Wordle puzzles better than a human
+I built a js script to solve the popular puzzle game Wordle. This was to test problem solving strategies I've learned in the Project Odin Foundation Course.
 
-## Wordle puzzle description
+## What is 'Wordle'?
 
-Wordle is an online 5-letter word game. Each day a new word is released and players have six attempts to guess what the word of the day is. Each guess must be a 5-letter word. During the guesses, tiles will change colour to help players get the word. A grey letter means it isn’t in today’s word, whilst a yellow letter signals it is in the word but in the wrong position. Then there’s the green letter which means it’s in the word and in the right place.
+Link to Wordle: [click here to try the game](https://www.nytimes.com/games/wordle/index.html)
 
-## Overall plan
+Wordle is an online game developed by the New York Times that is designed to test vocabulary. Each day a new word is chosen as a solution, and players have six attempts to guess the word. Each guess returns information in the form of coloured tiles; a green tile indicates a letter that is in the right place, a yellow tile indicates a letter that is in the wrong place, and a blank tile indicates the letter is not in the solution word.
 
-Iteration 1 of the bot will think only one turn at a time (I think that multiple turn thinking would have better performance,
-but is likely to be far more complicated). Also, this iteration will require the human to enter the bot's guesses, and report
-back information to the bot (input which tiles came back blank, yellow, or green). The first iteration will just use console
-prompts and alerts to attain inputs from the user/ communicate with the user.
+## My Approach
 
-### Supporting principle
+I wanted to create an effective solver that was close to an optimal strategy. After some thinking I chose the following principle as the basis for my solver:
 
-There are a number of different principles I could work from. For iteration 1, I will work from the principle of minimising the expected number of remaining possible 5-letter words (in the English language) after the turn. This seems like it could be optimal (for one turn thinking), and is well defined, but I need to check if it would be feasible. The reasoning behind this is that at the start of each turn, each of the remaining possible words (given previous tile information) are equally  
-likely. So the way to have the biggest chance of a correct guess in each round is to have reduced the number of remaining possible words as much as possible in the 
-previous round. 
+My solver will minimises the expected number of possible solution words after the guess has been made
+
+The reasoning behind this principle is that at the start of each turn, each of the remaining possible words are equally likely to be the solution. Therefore, to have the best chance of guessing the solution, the solver should minimise the number of remaining possible words after the guess. 
+
+As a simplification, I chose to rely on 'one-turn thinking'. This means that the solver would not try and think more than one turn ahead when choosing the next word. For version 1 of the solver, I aimed to produce a function that the user could interact with in a web browser's developer tool console. For future versions, I aim to add a UI so that the user can interact with the solver in a web browser.
+
+Details of my working are provided below
 
 ## Functionality plan
 
