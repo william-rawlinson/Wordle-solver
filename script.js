@@ -10,7 +10,7 @@ function wordleSolver(possibleWords){ // Core function that takes user input on 
         }
         alert(`Please use ${outputGuess} as your guess`);
         console.log(`You entered ${outputGuess}`);
-        inputBYG = prompt('Please enter the colour of each tile in a five letter string, for example ygybg corresponds to yellow, green, yellow, blank, green');
+        inputBYG = getBYGInfo(inputBYG,tilePermutations);
         if (inputBYG == 'ggggg') {
             console.log(`congratulations the word was ${outputGuess}`);
             break;
@@ -18,8 +18,21 @@ function wordleSolver(possibleWords){ // Core function that takes user input on 
         possibleWords = getPossibleWords(outputGuess,inputBYG,possibleWords);
         console.log(`there are ${possibleWords.length} possible words remaining`);
         console.log(possibleWords);
-        // to add lower/case upper case control, and handling of user clicking cancel (i.e. null input)
     }
+}
+
+function getBYGInfo (inputBYG, tilePermutations){ // To get information on the tile colours Wordle has returned from the user
+    inputRecognised = 0;
+    inputBYG = prompt('Please enter the colour of each tile in the form ygyby, ygybg corresponds to yellow, green, yellow, blank, green').toLowerCase();
+    if (!tilePermutations.includes(inputBYG)){
+        while (inputRecognised == 0){
+            inputBYG = prompt('Input unrecognised, enter again in the form ygby, ygybg corresponds to yellow, green, yellow, blank, green').toLowerCase();
+            if (tilePermutations.includes(inputBYG)){
+                inputRecognised = 1;
+            }
+        }
+    }
+    return inputBYG;
 }
 
 function getNextWord(possibleWords, tilePermutations){ // To generate next optimal guess (word with lowest EVCount)
