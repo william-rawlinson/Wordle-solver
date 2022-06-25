@@ -28,40 +28,40 @@ Version 1 of my solver has performed very well. I've used the solver 4 times, an
 
 For version 1 of the solver, the solver will be a function 'wordleSolver()' that the user can interact with in a web browser's developer tool console. I won't attempt any optimisation and see if the solver runs in manageable times. The solver will work as follows (top-level):
 
-    1. wordleSolver() will alert the user as to what they should enter for their first guess. For the first guess this will be the same every time, and so the first guess will be hard-coded rather than calculated inside the function
+1. wordleSolver() will alert the user as to what they should enter for their first guess. For the first guess this will be the same every time, and so the first guess will be hard-coded rather than calculated inside the function  
 
-    2. Wordle will return coloured tiles once the first guess is entered
+2. Wordle will return coloured tiles once the first guess is entered  
 
-    3. wordleSolver() will prompt the user to input what colour each of the 5 tiles were given (the user will enter a string of the form 'bybgg' where b stands for blank, y stands for yellow, g stands for green)
+3. wordleSolver() will prompt the user to input what colour each of the 5 tiles were given (the user will enter a string of the form 'bybgg' where b stands for blank, y stands for yellow, g stands for green)  
 
-    4. The solver will calculate the optimal second guess using a function getNextWord(), based on the word that was entered as first guess, and the tile colours inputted by the user. This will use the principle of minimising the expected number of possible solution words after the guess has been made
+4. The solver will calculate the optimal second guess using a function getNextWord(), based on the word that was entered as first guess, and the tile colours inputted by the user. This will use the principle of minimising the expected number of possible solution words after the guess has been made  
 
-    5. The solver will alert the user as to what they should enter for their second guess
+5. The solver will alert the user as to what they should enter for their second guess  
 
-    6. The steps will repeat until either the user enters 'ggggg' which signifies they have won the game, or until 6 guesses have been returned (at which point the user is out of guesses)
+6. The steps will repeat until either the user enters 'ggggg' which signifies they have won the game, or until 6 guesses have been returned (at which point the user is out of guesses)  
 
 ## Algorithm - worldeSolver()
 
-Variables
+Variables  
 
-outputGuess = '', stores the current guess suggested by the solver as a string
-inputBYG = '', stores the tile colours returned by Wordle for the current guess as a 5 letter string of form 'ybgyb'
-possibleWords, array that stores the current valid list of guesses (initial value is the full valid list of guesses, this is reduced each turn to hold only words that could be the solution, given the guesses and tile information that have been provided)
+outputGuess = '', stores the current guess suggested by the solver as a string  
+inputBYG = '', stores the tile colours returned by Wordle for the current guess as a 5 letter string of form 'ybgyb'  
+possibleWords, array that stores the current valid list of guesses (initial value is the full valid list of guesses, this is reduced each turn to hold only words that could be the solution, given the guesses and tile information that have been provided)  
 
-Algorithm
+Algorithm  
     
-For loop, initialize i = 1, condition i < 7, increment + 1
-if i = 1, output guess is set equal to the optimal first guess (hard-coded)
-else, outputGuess is set equal to getNextWord(possibleWords,....)
-alert user to enter outputGuess into Wordle 
-propmt user for the tile colours returned by Wordle. inputBYG is set equal to the prompt (takes form 'ybgyb'). Prompt handles incorrect entry (asks user to re-enter until form is correct) and upper case (converts to lower case)
-if inputBYG is equal to 'ggggg' then returns message 'congratulations' and exits loop, the user has won
-else, possibleWords is set equal to getPossibleWords(outputGuess, inputBYG, possibleWords, ....), this removes words from the current possibleWords array that were not consistent with the prior guess and tile colours
-End of loop
+For loop, initialize i = 1, condition i < 7, increment + 1  
+if i = 1, output guess is set equal to the optimal first guess (hard-coded)  
+else, outputGuess is set equal to getNextWord(possibleWords,....)  
+alert user to enter outputGuess into Wordle   
+propmt user for the tile colours returned by Wordle. inputBYG is set equal to the prompt (takes form 'ybgyb'). Prompt handles incorrect entry (asks user to re-enter until form is correct) and upper case (converts to lower case)  
+if inputBYG is equal to 'ggggg' then returns message 'congratulations' and exits loop, the user has won  
+else, possibleWords is set equal to getPossibleWords(outputGuess, inputBYG, possibleWords, ....), this removes words from the current possibleWords array that were not consistent with the prior guess and tile colours  
+End of loop  
 
 ## Plan - getNextWord()
 
-As specified above, the principle behind this function should be to minimise the expected number of possible solution words after the guess has been made.
+As specified above, the principle behind this function should be to minimise the expected number of possible solution words after the guess has been made.  
 
 A resource intensive method could work based on the following. Each guess has a range of tile colour outcomes, symbolised by a 5 letter combination (i.e. 'ybbbb' is the outcome that only the first letter of the guess is in the solution, and it's in the wrong place). Given a guess word, each of these tile colour outcomes has a probability, 'x/y', which can be calculated from the number of words in possibleWords that are consistent with that tile colour outcome and that guess 'x', divided by the total number of words in possibleWords 'y'. Each outcome also has an associated number of possible words remaining following the turn. This is just equal to 'x'. Therefore, the contribution to the total expected number of remaining possible words for a given guess word, and a specific tile outcome, is 'x^2/y'. There are z possible tile colour outcomes for each guess. This is the number of permutations of 'bygyb' where each character can take 'b', 'y', 'g'. Therefore, z = 3^5 = 243. The function could try each word in possibleWords as a guess. For each of these words, the function could calculate the expected number of possible solution words after the guess has been made by summing over the 'x^2/y' contributions from each of the 243 possilbe tile colour outcomes. In this way, the guess word with the lowest expected number of possible solution words after the guess has been made can be identified. This would be the next outputGuess, and would be returned by getNextWord() as a string.
 
@@ -111,19 +111,19 @@ getNextWord() will need sub-functions to check whether a solution word (taken fr
 
 There are two sets of rules. These depend on whether the guess word contains repeating letters or not. For the function that checks consistency, I will build in an initial check for whether the word contains repeating letters, and apply the relevant set of rules based on that.
 
-1. For the case where the given letter does not appear more than once in the guess word:
+1. For the case where the given letter does not appear more than once in the guess word:  
 
-    'b' a blank tells you that the given letter in the guess word is not in the solution word
-    'g' a green tells you that the given letter in the guess word is in the solution word in the exact same index
-    'y' a yellow tells you that the given letter is in the solution word, but is not in the same index as it appears for the guess word
+'b' a blank tells you that the given letter in the guess word is not in the solution word  
+'g' a green tells you that the given letter in the guess word is in the solution word in the exact same index  
+'y' a yellow tells you that the given letter is in the solution word, but is not in the same index as it appears for the guess word  
 
-2. For the case where the given letter does appear more than once in the guess word. 
+2. For the case where the given letter does appear more than once in the guess word:   
 
 These are a little tricky to spell out. Essentially, a letter can only be given a 'y' or 'g' tile colour for as many times as it appears in the solution word. For example, if the solution word is 'break' and the guess word is 'prior', a yellow will not be returned for the last 'r' in 'prior', as the first 'r' in prior is assigned a 'g', and there is only one 'r' in break. The rules are effectively:
 
-    'b' a blank tells you that the given letter in the guess word is not in the solution word OR that this letter type has already been assigned 'g's or 'y's   equal to the number of times it occurs in the solution word
-    'g' a green tells you that the given letter in the guess word is in the solution word in the exact same index
-    'y' a yellow tells you that the given letter is in the solution word, but is not in the same index as it appears for the guess word
+'b' a blank tells you that the given letter in the guess word is not in the solution word OR that this letter type has already been assigned 'g's or 'y's   equal to the number of times it occurs in the solution word  
+'g' a green tells you that the given letter in the guess word is in the solution word in the exact same index  
+'y' a yellow tells you that the given letter is in the solution word, but is not in the same index as it appears for the guess word  
 
 The above rules do not translate so simply into checks to perform. Thinking about how to capture these rules, the difference from the first set of rules really boils down to the fact that we need to account for letters in the solution word being 'used up' by 'g' or 'y' tiles. I can account for this by changing tiles in the solution word after they have been 'used' to a '$' so that they are no longer picked up by checks such as .includes() for letters further along in the guess. When a 'y' is returned, I will need to be careful not to change letters in the solution word that correspond to a 'g' tile colour to '$', as this could break a subsequent 'g' check. 
 
