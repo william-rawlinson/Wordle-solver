@@ -20,287 +20,178 @@ The reasoning behind this principle is that at the start of each turn, each of t
 
 Version 1 of my solver has performed very well. I've used the solver 4 times, and have found the solution in 2 guesses, 3 guesses, 4 guesses, and 3 guesses, respectively. My solver has identified the word 'lares' as the optimal first guess. This is an obscure word referring to guardian deities in ancient Roman religion.
 
-# Detailed Working Below
 
-I'm going to assume that I can find an optimal first turn word 
-choice (as this will be the same every time) outside of this algorithm.
 
-The bot will alert the user to the optimal first turn word. The user will enter this into the Wordle app.  
-The Wordle app will return which tiles were blank, which were yellow, and which were green.
-The user will input which tiles are blank, yellow, or green by entering a string of the form 'bbygb' into a prompt (example  
-translates to first tile blank, second tile blank, third tile yellow, fourth tile green, fifth tile blank).
-The bot will use this input to calculate the optimal second word choice, and will produce an alert containing the 
-optimal second word choice. This will continue until either the user inputs 'ggggg' or until the sixth guess is 
-given as an alert. (For future iterations, the bot will have a functionality to record its win/loss ratio).
+# Working 
 
-## Algorithm
+## Basic Plan - Version 1
+
+For version 1 of the solver, the solver will be a function 'wordleSolver()' that the user can interact with in a web browser's developer tool console. I won't attempt any optimisation and see if the solver runs in manageable times. The solver will work as follows (top-level):
+
+    1. wordleSolver() will alert the user as to what they should enter for their first guess. For the first guess this will be the same every time, and so the first guess will be hard-coded rather than calculated inside the function
+
+    2. Wordle will return coloured tiles once the first guess is entered
+
+    3. wordleSolver() will prompt the user to input what colour each of the 5 tiles were given (the user will enter a string of the form 'bybgg' where b stands for blank, y stands for yellow, g stands for green)
+
+    4. The solver will calculate the optimal second guess using a function getNextWord(), based on the word that was entered as first guess, and the tile colours inputted by the user. This will use the principle of minimising the expected number of possible solution words after the guess has been made
+
+    5. The solver will alert the user as to what they should enter for their second guess
+
+    6. The steps will repeat until either the user enters 'ggggg' which signifies they have won the game, or until 6 guesses have been returned (at which point the user is out of guesses)
+
+## Algorithm - worldeSolver()
 
 Variables
 
-variable round, type int
-variable outputGuess, type string
-variable inputBYG, type string
-constant firstWord, string containing optimal first turn word  
-Array enteredWords, Each entry is a word that was entered, entry 1 is the first word etc.  
-Array returnedBYG,  Each entry is a string standing for blank, yellow, or green, that specifies the tile information. Entry 1 is for the first entered word.  
-Array fiveLetterWordLibrary, Stores all five-letter words in the English dictionary.
-Array possibleWords, stores the remaining possible words, initial contents are the same as fiveLetterWordLibrary. 
-variable evCount, stores the expected value of remaining words for a given testWord
-variable bestEvCount, stores the current lowest expected value of remaining words whilst possibleWords is fed into getNextWord
-variable lengthPossibleWords, length of the possibleWords array
-variable currentOptimalGUess, tracks the index of the current optimal word (in the possibleWords array) whilst the possibleWords array is fed into getNextWord
-Array tilePermutations, stores possible tile color permutations (i.e, 'ygbbb')
-variable currentTilePermutation = 0
-variable runningEvCount = 0, stores evCount whilst looping over tilePermutations in getEvCount
-variable runningConsistentWords = 0, stores number of consistent words whilst looping over possibleWords in getNumConsistentWords
-variable consistencyCheck = 0, stores whether word is conistent or inconsistent, within function isConsistent
+    outputGuess = '', stores the current guess suggested by the solver as a string
+    inputBYG = '', stores the tile colours returned by Wordle for the current guess as a 5 letter string of form 'ybgyb'
+    possibleWords, array that stores the current valid list of guesses (initial value is the full valid list of guesses, this is reduced each turn to hold only words that could be the solution, given the guesses and tile information that have been provided)
 
-Algorithm for wrapper function
-
+Algorithm
+    
     For loop, initialize i = 1, condition i < 7, increment + 1
+    if i = 1, output guess is set equal to the optimal first guess (hard-coded)
+    else, outputGuess is set equal to getNextWord(possibleWords,....)
+    alert user to enter outputGuess into Wordle 
+    propmt user for the tile colours returned by Wordle. inputBYG is set equal to the prompt (takes form 'ybgyb'). Prompt handles incorrect entry (asks user to re-enter until form is correct) and upper case (converts to lower case)
+    if inputBYG is equal to 'ggggg' then returns message 'congratulations' and exits loop, the user has won
+    else, possibleWords is set equal to getPossibleWords(outputGuess, inputBYG, possibleWords, ....), this removes words from the current possibleWords array that were not consistent with the prior guess and tile colours
+    End of loop
+
+## Plan - getNextWord()
+
+    As specified above, the principle behind this function should be to minimise the expected number of possible solution words after the guess has been made.
+    
+     A resource intensive method could work based on the following. Each guess has a range of tile colour outcomes, symbolised by a 5 letter combination (i.e. 'ybbbb' is the outcome that only the first letter of the guess is in the solution, and it's in the wrong place). Given a guess word, each of these tile colour outcomes has a probability, 'x/y', which can be calculated from the number of words in possibleWords that are consistent with that tile colour outcome and that guess 'x', divided by the total number of words in possibleWords 'y'. Each outcome also has an associated number of possible words remaining following the turn. This is just equal to 'x'. Therefore, the contribution to the total expected number of remaining possible words for a given guess word, and a specific tile outcome, is 'x^2/y'. There are z possible tile colour outcomes for each guess. This is the number of permutations of 'bygyb' where each character can take 'b', 'y', 'g'. Therefore, z = 3^5 = 243. The function could try each word in possibleWords as a guess. For each of these words, the function could calculate the expected number of possible solution words after the guess has been made by summing over the 'x^2/y' contributions from each of the 243 possilbe tile colour outcomes. In this way, the guess word with the lowest expected number of possible solution words after the guess has been made can be identified. This would be the next outputGuess, and would be returned by getNextWord() as a string.
+
+## Plan - Creating an Array of Possible Tile Colours
+
+    In the function getNextWord(), I will need to cycle through different permutations of tile outcomes. There are 3^5 = 243 permutations of 5 tiles that can be green, yellow, or blank. To build an array containing each of these permutations in the form 'ybgby', I can use logic based on a combination lock. If you have a combination lock with 3 slots, and 0-9 in each slot, you have 10^3 permutations (i.e. 1,000). These can be formed in a systematic way by considering the 'total' number displayed by the lock and going from '000' to '999' in incremental steps. For example, the first three permutations would be: 001, 002, 003. The last three permutations would be: 997, 998, 999. This just involves changing the third slot every step, changing the second slot every 10th step, and changing the third slot every 100th step.
+    
+    For our problem, we have 5 slots, that can take 'g', 'b', or 'y'. So we can start from 'ggggg' and work up to 'bbbbb' changing the fifth slot every time (cycling through 'g', 'y', 'b'), changing the fourth every 3rd time, the third every 9th times, the second every 27th time and the first every 81 times.
+
+    ----------------------------------------------------------------
+
+    Code this led to:
+
+    function getTilePermutations (){ // Generates tilePermutations, which are all the possible tile colours Wordle could return
+        let tilePermutations = ['ggggg']; // g = green, y = yellow, b = blank
+        let activePermutation = 'ggggg'
+        for (let i = 1; i < 243; i++){
+            activePermutation[4]=='g'? activePermutation = replaceAtStringIndex(activePermutation,4,'y'):
+            activePermutation[4]=='y'? activePermutation = replaceAtStringIndex(activePermutation,4,'b'):
+            activePermutation = replaceAtStringIndex(activePermutation,4,'g');
+            if (i % 3 == 0){
+                activePermutation[3]=='g'? activePermutation = replaceAtStringIndex(activePermutation,3,'y'):
+                activePermutation[3]=='y'? activePermutation = replaceAtStringIndex(activePermutation,3,'b'):
+                activePermutation = replaceAtStringIndex(activePermutation,3,'g');
+            }
+            if (i % 9 == 0){
+                activePermutation[2]=='g'? activePermutation = replaceAtStringIndex(activePermutation,2,'y'):
+                activePermutation[2]=='y'? activePermutation = replaceAtStringIndex(activePermutation,2,'b'):
+                activePermutation = replaceAtStringIndex(activePermutation,2,'g');
+            }
+            if (i % 27 == 0){
+                activePermutation[1]=='g'? activePermutation = replaceAtStringIndex(activePermutation,1,'y'):
+                activePermutation[1]=='y'? activePermutation = replaceAtStringIndex(activePermutation,1,'b'):
+                activePermutation = replaceAtStringIndex(activePermutation,1,'g');
+            }
+            if (i % 81 == 0){
+                activePermutation[0]=='g'? activePermutation = replaceAtStringIndex(activePermutation,0,'y'):
+                activePermutation[0]=='y'? activePermutation = replaceAtStringIndex(activePermutation,0,'b'):
+                activePermutation = replaceAtStringIndex(activePermutation,0,'g');
+            }
+            tilePermutations.push(activePermutation)
+        }
+        return tilePermutations
+    }
+
+## Plan - Checking Consistency
+
+    getNextWord() will need sub-functions to check whether a solution word (taken from possibleWords) is consistent with a guess and a tile colour outcome. For example, this question takes the form: 'Is the solution word 'break' consistent with the guess 'prior' and the tile colour outcome 'ggbbb''. Thinking about this problem, the tile colours returned by Wordle are returned according to some well defined rules. Therefore, we just need to check that those rules haven't been violated. 
+    
+    There are two sets of rules. These depend on whether the guess word contains repeating letters or not. For the function that checks consistency, I will build in an initial check for whether the word contains repeating letters, and apply the relevant set of rules based on that.
+    
+    1. For the case where the given letter does not appear more than once in the guess word:
+
+        'b' a blank tells you that the given letter in the guess word is not in the solution word
+        'g' a green tells you that the given letter in the guess word is in the solution word in the exact same index
+        'y' a yellow tells you that the given letter is in the solution word, but is not in the same index as it appears for the guess word
+
+    2. For the case where the given letter does appear more than once in the guess word. 
+    
+    These are a little tricky to spell out. Essentially, a letter can only be given a 'y' or 'g' tile colour for as many times as it appears in the solution word. For example, if the solution word is 'break' and the guess word is 'prior', a yellow will not be returned for the last 'r' in 'prior', as the first 'r' in prior is assigned a 'g', and there is only one 'r' in break. The rules are effectively:
+
+        'b' a blank tells you that the given letter in the guess word is not in the solution word OR that this letter type has already been assigned 'g's or 'y's   equal to the number of times it occurs in the solution word
+        'g' a green tells you that the given letter in the guess word is in the solution word in the exact same index
+        'y' a yellow tells you that the given letter is in the solution word, but is not in the same index as it appears for the guess word
+
+    The above rules do not translate so simply into checks to perform. Thinking about how to capture these rules, the difference from the first set of rules really boils down to the fact that we need to account for letters in the solution word being 'used up' by 'g' or 'y' tiles. I can account for this by changing tiles in the solution word after they have been 'used' to a '$' so that they are no longer picked up by checks such as .includes() for letters further along in the guess. When a 'y' is returned, I will need to be careful not to change letters in the solution word that correspond to a 'g' tile colour to '$', as this could break a subsequent 'g' check. 
+
+    ----------------------------------------------------------------
+
+    Code this led to:
+
+    Case with no repeating letters
+
+    function isConsistentNoRepeats(testWord, currentTilePermutation, compareWord){ // isConsistent where the testWord doesn't contain duplicate letters
+        let consistencyCheck = 0;
+        for (let i = 0; i < testWord.length; i ++){
+            if (currentTilePermutation[i] == 'b'){
+                if (compareWord.includes(testWord[i])) {
+                    break;
+                } 
+            } else if (currentTilePermutation[i] == 'y'){
+                if (!compareWord.includes(testWord[i])||compareWord[i]==testWord[i]) {
+                    break;
+                }
+            } else if (currentTilePermutation[i] == 'g'){
+                if (compareWord[i] != testWord[i]) {
+                    break;
+                }
+            }
+            if (i == 4) {
+                consistencyCheck = 1;
+            }
+        }
+        return consistencyCheck;
+    } 
+    
+    Case with repeating letters
+
+    function isConsistentWithRepeats(testWord, currentTilePermutation, compareWord){ // isConsistent where the testWord does contain duplicate letters i.e. 'pretty'
+        let consistencyCheck = 0;
+        for (let i = 0; i < testWord.length; i ++){
+            if (currentTilePermutation[i] == 'b'){
+                if (compareWord.includes(testWord[i])) {
+                    break;
+                } 
+            } else if (currentTilePermutation[i] == 'y'){
+                if (compareWord.includes(testWord[i])&&compareWord[i]!=testWord[i]) {
+                    let k = getIndexesOfCharacter(compareWord,testWord[i])
+                    for (let j = 0; j < k.length; j++){
+                        if (currentTilePermutation[k[j]] != 'g'){
+                            compareWord = replaceAtStringIndex (compareWord, k[j], '$')
+                        }
+                    }
+                } else {
+                    break;
+                }
+            } else if (currentTilePermutation[i] == 'g'){
+                if (!(compareWord[i] != testWord[i])) {
+                    compareWord = replaceAtStringIndex (compareWord, i, '$')
+                } else {
+                    break;
+                }
+            }
+            if (i == 4) {
+                consistencyCheck = 1;
+            }
+        }
+        return consistencyCheck;
+    }
 
-    OutputGuess is set equal to getNextWord(enteredWords, returnedBYG, fiveLetterWordLibrary, possibleWords). This function  
-    calculates the word that will minimise the expected number of remaining possible 5-letter words, and returns this as a string.
-    This function returns firstWord when the round counter is 1. 
-    possibleWords is set equal to function getPossibleWords(possibleWords, enteredWords, returnedBYG). 
-    function storeEnteredWord fills row i of enteredWords to match outputGuess.  
-    Alert is given, asking user to use outputGuess as their turn guess.  
-    User is prompted for the tile information they received from Wordle. Input is stored in inputBYG.  
-    function storeReturnedBYG fills row i of returnedBYG to match inputBYG.  
-    break condition, if inputBYG == 'ggggg' 
 
-End algorithm
-
-## getNextWord function
-
-getNextWord(enteredWords, returnedBYG, fiveLetterWordLibrary, possibleWords, lengthPossibleWords)
-
-First stab, resource intensive method:
-
-Each word has a range of outcomes, symbolised by a 5 letter combination (i.e. ybbbb is the outcome that only the first letter is in the solution, and it's in the wrong place). Each outcome has a probability, x/y which can be calculated based on how many of the remaining possible words fit the tile information (x) and on how many words are in the remaining possible word set (y). I.e. in this case, how many of the remaining possible words contain just the first letter, and not in the first position. The outcome also has an associated size of remaining words following the turn. Conveniently, this is equal to the numerator of the probability of the outcome (x). So the contribution from a given outcome to the expected number of remaining possible words is x^2/y. There are z possible outcomes for each word (permutations of byg in 5 slots) where z = 3^5 = 243. This method would require, for each word (say 1,000) running through 243 possible outcomes, where to calculate the contribution from each outcome it is required to check all remaining words (1,000) against the outcome. So this would require 1000 * 243 * 1000 checks. 
-
-algorithm for getNextWord(enteredWords, returnedBYG, fiveLetterWordLibrary, possibleWords, lengthPossibleWords) 
-
-    bestEvCount = 999999999 (set bestEvCount so high that first word is guaranteed to have lower evCount)
-    currentOptimalGuess = 0
-
-    for loop, (initialisation i = 0, condition i < lengthPossibleWords; increment i + 1)
-
-    possibleWords[i] represents the candidate word for selection as outputGuess
-    In this for loop, we calculate the total evCount for each word possibleWords[i].
-    We then compare this to bestEvCount. If evCount is lower than bestEvCount, then
-    bestEvCount is set equal to evCount, and currentOptimalGuess is set equal to i.
-    Otherwise, nothing happens
-    evCount = getEvCount(possibleWords[i],possibleWords)
-    if (evCount < bestEvCount) then set bestEvCount = evCOunt and currentOptimalGuess = i
-    Otherwise do nothing
-
-    end for loop
-
-    Function returns possibleWords[currentOptimalGuess]
-
-End algorithm
-
-## getEvCount function
-
-function getEvcount(testWord, possibleWords)
-
-takes a word in possibleWords as input, and calculates evCount for that word.
-evCount is the expected number of remaining possible words after that word guess.
-evCount is a sum over the contributions from each possible ybg combination (i.e. each set of tile color information). Each contribution
-As given above, each contribution is calculated as x^2/y, where x = number of words in possibleWords that are consistent with that tile information
-and where y = lengthPossibleWords.
-However, there may be a complexity. What is the contribution for the 'ggggg' permutation? the number of remaining possible words could be thought of as 1 or it
-could be thought of as 0. For now, I will allow for this permutation to count as 1 remaining possible word, for simplicty in the algorithm. Therefore,
-this will give a contribution of 1/y for all testWords. This shouldn't change anything with what comes out as the optimal guess
-
-
-algorithm for getEvCount(testWord, possibleWords)
-
-    for loop, initialisation i = 0, condition i < lengthTilePermutations, increment i + 1
-
-    set currentTilePermutation = tilePermutations[i]
-    runningEvCount = runningEvCount + (getNumConsistentWords (testWord, currentTilePermutation, possibleWords))^2/lengthPossibleWords
-
-    end for loop
-
-    function returns running evCount
-
-## getNumConsistentWords function
-
-function getNumConsistentWords(testWord, currentTilePermutation, possibleWords)
-
-takes a test word, a set of tile information as input (i.e. five letter string representing color information 'ygbgb'), and the remaining possible words
-and counts how many of the possibleWords array are consistent with the test word and that tile information.
-
-The first version will be slow on computing time, so lets just compare the testWord and currentTilePermutation to one word at a time in possible words. So we need to figure a way to compare testWord to a single word in possibleWords, and tell if it is consitent with test word and currentTilePermutation. currentTilePermutation gives us rules: if we have blanks, they tell us that the possibleWord can't have those letters. If we have yellows, these tell us the PossibleWord must have that letter, if we have greens that tells us the possible word must have that letter in that location. We can take each letter of testWord and apply the rule suggested by that letter and the corresponding index of currentTilePermutation, to the word we are comparing to, to see if it is consistent with that rule. (although we will
-need to be careful for testWords that contain repeat letters, as there are some nuances here). So say we have the word 'alert' and 'bgybg'. The first b implies the possible word must not contain the 'a', so we apply that rule. if it were y in letter 1, we must check that the possible word does contain
-'a', if it were g in letter 1, the possible word must contain 'a' as its first letter. I can see that this algorithm is going to take lots of computing 
-time to run, but that there will be some really interesting ways to speed it up (for example, what order to apply rules? we would decide on what is most likely to rule a word out).
-
-Algorithm for method as described above
-
-getNumConsistentWords(testWord, currentTilePermutation, possibleWords)
-
-    for loop, initialisation i = 0, conditon i < lengthPossibleWords, increment i + 1
-
-    runningConsistentWords = runningConsistentWords + isConsistent(testWord, currentTilePermutation, possibleWords[i])
-
-    end for loop
-
-    return runningConsistentWords
-
-End function
-
-
-## function isConsistent(testWord, currentTilePermutation, compareWord)
-
-This function will take testWord (string), and currentTilePermutation (string), and will output 1 if compareWord is consistent with that testWord/
-currentTilePermutation and 0 otherwise. I'll first write an algorithm for the case where we don't have repeating letters, and then the case where 
-we do have repeating letters (more nuanced)
-
-Algorithm for isConsistentNoRepeats.
-
-isConsistent algorithm (not considering testWord with repeating letters)
-
-    for loop, initialisation i = 0, condition i < 5, increment i + 1
-
-        let consistencyCheck = 0
-        if currentTilePermutation[i] == b then if compareWord.includes(testWord[i]) is true exit loop
-        if currentTilePermutation[i] == y then if compareWord.includes(testWord[i]) is false or compareWord[i] == testWord[i] is true exit loop
-        if currentTilePermutation[i] == g then if compareWord[i] == testWord[i] is false exit loop
-        otherwise consistencyCheck = 1
-
-    end for loop
-
-    return consistencyCheck
-
-I've written this in code and I'm going to try this out and test computing time. I've implemented an isConistent function that takes 111 seconds to run
-243 million comparisons (which is an 1000 remaining words case, as described above). Lot's of optimisation to do but not impossible i think!
-
-Why repeated letters can cause issues:
-
-say you enter the word 'petty' and the word is 'trait'. you would get
-two yellows for 'bbyyb'. But a word like 'triii' shouldn't be consistent and
-the above algorithm would say it is. The isConsistent algorithm isn't working
-for situations where you have multiple of the same letters returning yellows. 
-The world game works so that it only gives you a yellow if you haven't already been given a yellow or green for all the instances
-of that letter contained in the solution.
-
-To check whether we need to deal with this nuanced case, we should check for if the word contains a repeat letter.
-strictly speaking we could narrow this condition down but for now I'm just going to go for this wide condition
-as it would catch any problem case (optimisation later).
-
-I've had a think about ways to deal with all the possible nuances of repeated letters, and the problem really boils down to the fact
-that letters everywhere in the word are still 'active' or 'present' to the .includes() searches for the second condition
-of isConsistent, even if they have already been 'used' by a green or yellow tile. So a simple solution to this
-is to change tiles after they have been 'used' to a '$' so that they are no longer active in the word. There is one
-added complexity, when dealing with a yellow, I will need to avoid changing tiles to '$' if they correspond to a 'g' 
-in currentTilePermutation, as this would break the subsequent 'g' check. I'd need to remove other tiles with the same
-letter that don't correspond to a 'g'.
-
-Algorithm for isConsistentWithRepeats (now considering edge cases with repeated letters)
-
-isConsistentWithRepeats
-
-    for loop, initialisation i = 0, condition i < 5, increment i + 1
-
-        let consistencyCheck = 0
-        if currentTilePermutation[i] == b then if compareWord.includes(testWord[i]) is true exit loop
-
-        if currentTilePermutation[i] == y then if compareWord.includes(testWord[i]) is true and compareWord[i] == testWord[i] is false
-        then alter the compare word exchanging a tile with the same letter as testWord[i] that isn't in an index corresponding to a 'g'
-        with a '$' symbol
-        otherwise exit loop
-
-        if currentTilePermutation[i] == g then if compareWord[i] == testWord[i] is true, then exchange compareWord[i] with a '$' sign
-        otherwise exit loop
-
-        otherwise consistencyCheck = 1
-
-    end for loop
-
-    return consistencyCheck
-
-
-## Generating tilePermutations
-
-tile permutations is an array storing all the possible permutations of tile information, each permutation as a string. 
-For example 'ggggg', 'yyyyy','ybygy' etc. There are 3^5 permutations. I'm going to design a function that can build this
-array.
-
-Plan - ideas
-
-For permutations, order matters. They work in the same way as a confusingly named 'combination' lock. If you have a combination
-lock with 3 slots, and 0-9 in each slot, you have 10^3 permutations (i.e. 1,000). These can be formed in a systematic way by
-considering the 'total' number and going from 000 to 999 in incremental steps. I.e. 001, 002, etc.
-
-I think we can take a similar approach for this problem. We have 5 slots, each can take any of three letters. We can choose 
-'g' as the base (i.e. equivalent to 0), 'y' as equivalent to 1, and 'b' as equivalent to 2. Then we can work in incremental
-steps from 'ggggg' to 'bbbbb'. So this would be 'ggggg', 'ggggy', 'ggggb', 'gggyg', 'gggyy','gggyb', 'gggbg' etc.
-
-So the algorithm just needs to systematize this process. I think we could do this with 5 for loops, I'll go with this for now 
-it may not be the most elegant solution but it should work.
-
-Plan - workings
-
-The algorithm will work with a for loop. The loop will have actions associated with one of the 5 slots of the permutation string.
-The algorithm will start with a tilePermutations array with the 'ggggg' string in the first index. 
-The algorithm will work on a string 'activePermutation', each step will alter this by one character, and then push the 
-resulting activePermutation as the next index of tilePermutations array. 
-The first loop will change this to 'ggggy' and push this string to form the second index of the tilePermutations
-array. The loop will need to change the last slot every time, the second slot will need to change every 3rd time, the third
-slot will need to change every 9th time etc. All the way up to the fifth slot that will need to change every 81 times
-
-## getTilePermutations algorithm
-
-getTilePermutations()
-
-tilePermutations = array containing one element 'ggggg'
-activePermutation = 'ggggg'
-
-for loop ,initlialisation i = 1, condition i <243, increment i + 1
-
-activePermutation[4]=='g'? replce active Permutation[4] with 'y': 
-activePermutation[4]=='y'? replace active Permutation [4] with 'b':
-replace active Permutation[4] with 'g'
-
-if (i % 3 == 0){
-
-activePermutation[3]=='g'? replce active Permutation[3] with 'y': 
-activePermutation[3]=='y'? replace active Permutation [3] with 'b':
-replace active Permutation[3] with 'g'
-
-}
-
-if (i% 9 == 0) {
-
-activePermutation[2]=='g'? replce active Permutation[2] with 'y': 
-activePermutation[2]=='y'? replace active Permutation [2] with 'b':
-replace active Permutation[2] with 'g'
-
-}
-
-if (i% 27 == 0) {
-
-activePermutation[1]=='g'? replce active Permutation[1] with 'y': 
-activePermutation[1]=='y'? replace active Permutation [1] with 'b':
-replace active Permutation[1] with 'g'
-
-}
-
-if (i% 81 ==0){
-
-activePermutation[0]=='g'? replce active Permutation[0] with 'y': 
-activePermutation[0]=='y'? replace active Permutation [0] with 'b':
-replace active Permutation[0] with 'g'
-
-}
-
-push activePermutation to tilePermutations
-
-
-
-}
 
 

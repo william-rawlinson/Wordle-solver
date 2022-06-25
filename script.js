@@ -4,7 +4,7 @@ function wordleSolver(possibleWords){ // Core function that takes user input on 
     let tilePermutations = getTilePermutations();
     for (let i =1; i<7;i++){
         if (i == 1){
-            outputGuess = 'lares';
+            outputGuess = 'lares'; // Guess calculated through getNextWord on the full possibleWords array (with every valid guess word), optimal guess is same every time 'lares'
         } else {
             outputGuess = getNextWord(possibleWords, tilePermutations);
         }
