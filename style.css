@@ -15,7 +15,8 @@ body {
 .banner {
     background-color:aquamarine;
     flex: 1 1 10vh;
-    font-size: 2vw;
+    font-size: 1.5vw;
+    padding: 0px 2vw 0px 2vw;
 }
 
 .content {
@@ -56,4 +57,16 @@ body {
     border-radius: 0.5vw;
     border-width: 0.2vw;
     padding: 0 1vw 0 1vw;
+}
+
+.b {
+    background-color: #787C7E;
+}
+
+.y {
+    background-color: #C9B458;
+}
+
+.g {
+    background-color: #6AAA64;
 }
