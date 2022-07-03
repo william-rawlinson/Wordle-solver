@@ -13,6 +13,7 @@ function onStart(){
 
     const paragraph = document.createElement('p');
         paragraph.textContent = 'Guess number 1';
+        paragraph.classList.add('turnCounter');
         content.appendChild(paragraph);
 
     const buttonContainer = document.createElement('div');
@@ -33,6 +34,7 @@ function onStart(){
         confirm.classList.add('confirm');
         confirm.textContent = 'Confirm';
         content.appendChild(confirm);
+        confirm.addEventListener('click',confirmEvent)
 
     const letters = document.querySelectorAll('.letter');
         letters.forEach((letter) => {
@@ -54,3 +56,21 @@ function colorChange(event){
     }
 }
 
+function confirmEvent(){
+    let text = document.querySelector('.turnCounter');
+    let round = text.textContent[text.textContent.length -1];
+    round = +round + 1;
+    text.textContent = text.textContent.substring(0,text.textContent.length -1) + round;
+    let inputBYG = '';
+    const letters = document.querySelectorAll('.letter');
+    letters.forEach((letter) => {
+            if (letter.classList.contains('b')){
+                inputBYG = inputBYG + 'b';
+            } else if (letter.classList.contains('y')){
+                inputBYG = inputBYG + 'y';
+            } else if (letter.classList.contains('g')){
+                inputBYG = inputBYG + 'g';
+            }
+    })
+    console.log(inputBYG);
+}
