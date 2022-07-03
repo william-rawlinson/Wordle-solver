@@ -57,20 +57,37 @@ function colorChange(event){
 }
 
 function confirmEvent(){
-    let text = document.querySelector('.turnCounter');
-    let round = text.textContent[text.textContent.length -1];
-    round = +round + 1;
-    text.textContent = text.textContent.substring(0,text.textContent.length -1) + round;
-    let inputBYG = '';
+    let outputGuess = '';
     const letters = document.querySelectorAll('.letter');
+    letters.forEach((letter) => {
+        outputGuess = outputGuess + letter.textContent;
+    })
+    outputGuess = outputGuess.toLowerCase();
+    console.log(outputGuess);
+    let inputBYG = '';
     letters.forEach((letter) => {
             if (letter.classList.contains('b')){
                 inputBYG = inputBYG + 'b';
             } else if (letter.classList.contains('y')){
                 inputBYG = inputBYG + 'y';
+                letter.classList.remove('y');
+                letter.classList.add('b');
             } else if (letter.classList.contains('g')){
                 inputBYG = inputBYG + 'g';
+                letter.classList.remove('g');
+                letter.classList.add('b');
             }
     })
-    console.log(inputBYG);
+    console.log(onConfirmClick(outputGuess, inputBYG)[0]);
+    outputGuess = onConfirmClick(outputGuess, inputBYG)[0];
+    let idArray = ['first','second','third','fourth','fifth'];
+    for (let i = 0; i < idArray.length; i++){
+        let elementToChange = document.querySelector(`#${idArray[i]}`);
+        elementToChange.textContent = outputGuess[i];
+    }
+    let text = document.querySelector('.bannerText');
+    let round = text.textContent[text.textContent.length -1];
+    round = +round + 1;
+    text.textContent = text.textContent.substring(0,text.textContent.length -1) + round;
 }
+
