@@ -69,15 +69,20 @@ function confirmEvent(){
             inputBYG = inputBYG + 'b';
         } else if (item.classList.contains('y')){
             inputBYG = inputBYG + 'y';
-            item.classList.remove('y');
-            item.classList.add('b');
         } else if (item.classList.contains('g')){
             inputBYG = inputBYG + 'g';
-            item.classList.remove('g');
-            item.classList.add('b');
         }
     });    
     if (inputBYG!=='ggggg'){
+        letterButtons.forEach((item) => {
+            if (item.classList.contains('y')){
+                item.classList.remove('y');
+                item.classList.add('b');
+            } else if (item.classList.contains('g')){
+                item.classList.remove('g');
+                item.classList.add('b');
+            }
+        });    
         nextWord = confirmClickAlgorithm(currentWord, inputBYG);
         let idArray = ['first','second','third','fourth','fifth'];
         for (let i = 0; i < idArray.length; i++){
