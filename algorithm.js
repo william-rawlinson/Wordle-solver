@@ -6,28 +6,28 @@ function onConfirmClick(outputGuess,inputBYG){
     return returnArray;
 }
 
-function wordleSolver(possibleWords){ // Core function that takes user input on tile colours and outputs guesses
-    let outputGuess = '';
-    let inputBYG = '';
-    let tilePermutations = getTilePermutations();
-    for (let i =1; i<7;i++){
-        if (i == 1){
-            outputGuess = 'lares'; // Guess calculated through getNextWord on the full possibleWords array (with every valid guess word), optimal guess is same every time 'lares'
-        } else {
-            outputGuess = getNextWord(possibleWords, tilePermutations);
-        }
-        alert(`Please use ${outputGuess} as your guess`);
-        console.log(`You entered ${outputGuess}`);
-        inputBYG = getBYGInfo(inputBYG,tilePermutations);
-        if (inputBYG == 'ggggg') {
-            console.log(`congratulations the word was ${outputGuess}`);
-            break;
-        }
-        possibleWords = getPossibleWords(outputGuess,inputBYG,possibleWords);
-        console.log(`there are ${possibleWords.length} possible words remaining`);
-        console.log(possibleWords);
-    }
-}
+// function wordleSolver(possibleWords){ // Core function that takes user input on tile colours and outputs guesses
+//     let outputGuess = '';
+//     let inputBYG = '';
+//     let tilePermutations = getTilePermutations();
+//     for (let i =1; i<7;i++){
+//         if (i == 1){
+//             outputGuess = 'lares'; // Guess calculated through getNextWord on the full possibleWords array (with every valid guess word), optimal guess is same every time 'lares'
+//         } else {
+//             outputGuess = getNextWord(possibleWords, tilePermutations);
+//         }
+//         alert(`Please use ${outputGuess} as your guess`);
+//         console.log(`You entered ${outputGuess}`);
+//         inputBYG = getBYGInfo(inputBYG,tilePermutations);
+//         if (inputBYG == 'ggggg') {
+//             console.log(`congratulations the word was ${outputGuess}`);
+//             break;
+//         }
+//         possibleWords = getPossibleWords(outputGuess,inputBYG,possibleWords);
+//         console.log(`there are ${possibleWords.length} possible words remaining`);
+//         console.log(possibleWords);
+//     }
+// }
 
 function getNextWord(possibleWords, tilePermutations){ // To generate next optimal guess (word with lowest EVCount)
     let bestEvCount = 999999999; // Arbitrary high number to ensure first word in the loop becomes bestEvCount

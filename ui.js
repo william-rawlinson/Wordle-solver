@@ -85,7 +85,7 @@ function confirmEvent(){
         let elementToChange = document.querySelector(`#${idArray[i]}`);
         elementToChange.textContent = outputGuess[i];
     }
-    let text = document.querySelector('.bannerText');
+    let text = document.querySelector('.turnCounter');
     let round = text.textContent[text.textContent.length -1];
     round = +round + 1;
     text.textContent = text.textContent.substring(0,text.textContent.length -1) + round;
