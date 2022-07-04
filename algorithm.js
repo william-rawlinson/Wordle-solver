@@ -1,4 +1,4 @@
-function onConfirmClick(currentWord,inputBYG){
+function confirmClickAlgorithm(currentWord,inputBYG){
     let tilePermutations = getTilePermutations();
     possibleWords = getPossibleWords(currentWord,inputBYG,possibleWords);
     let nextWord = getNextWord(possibleWords, tilePermutations);

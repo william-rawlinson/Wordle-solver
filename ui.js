@@ -19,7 +19,7 @@ function onStart(){
     const buttonContainer = document.createElement('div');
         buttonContainer.classList.add('buttonContainer');
         let idArray = ['first','second','third','fourth','fifth'];
-        let letterArray = ['L','A','R','E','S'];
+        let letterArray = ['L','A','R','E','S']; // calculated as optimal first turn word through use of getNextWord on the full initial possibleWords set
         for (let i =0; i < idArray.length; i++){
             const button = document.createElement('button');
             button.classList.add('letter');
@@ -77,7 +77,7 @@ function confirmEvent(){
                 letter.classList.add('b');
             }
     })
-    nextWord = onConfirmClick(currentWord, inputBYG)[0];
+    nextWord = confirmClickAlgorithm(currentWord, inputBYG);
     let idArray = ['first','second','third','fourth','fifth'];
     for (let i = 0; i < idArray.length; i++){
         let elementToChange = document.querySelector(`#${idArray[i]}`);
