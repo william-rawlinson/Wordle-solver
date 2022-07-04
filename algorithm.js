@@ -1,9 +1,8 @@
-function confirmClickAlgorithm(currentWord,inputBYG){
+function confirmClickAlgorithm(currentWord,inputBYG){ // Core function that is fed user input from the UI, and calculates the next guess word
     let tilePermutations = getTilePermutations();
     possibleWords = getPossibleWords(currentWord,inputBYG,possibleWords);
     let nextWord = getNextWord(possibleWords, tilePermutations);
-    let returnArray = [nextWord, possibleWords];
-    return returnArray;
+    return nextWord;
 }
 
 // function wordleSolver(possibleWords){ // Core function that takes user input on tile colours and outputs guesses

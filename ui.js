@@ -58,25 +58,24 @@ function colorChange(event){
 
 function confirmEvent(){
     let currentWord = '';
-    const letters = document.querySelectorAll('.letter');
-    letters.forEach((letter) => {
-        currentWord = currentWord + letter.textContent;
-    })
-    currentWord = currentWord.toLowerCase();
+    const letterButtons = document.querySelectorAll('.letter');
+    letterButtons.forEach((item) => {
+        currentWord = currentWord + item.textContent.toLowerCase();
+    });
     let inputBYG = '';
-    letters.forEach((letter) => {
-            if (letter.classList.contains('b')){
-                inputBYG = inputBYG + 'b';
-            } else if (letter.classList.contains('y')){
-                inputBYG = inputBYG + 'y';
-                letter.classList.remove('y');
-                letter.classList.add('b');
-            } else if (letter.classList.contains('g')){
-                inputBYG = inputBYG + 'g';
-                letter.classList.remove('g');
-                letter.classList.add('b');
-            }
-    })
+    letterButtons.forEach((item) => {
+        if (item.classList.contains('b')){
+            inputBYG = inputBYG + 'b';
+        } else if (item.classList.contains('y')){
+            inputBYG = inputBYG + 'y';
+            item.classList.remove('y');
+            item.classList.add('b');
+        } else if (item.classList.contains('g')){
+            inputBYG = inputBYG + 'g';
+            item.classList.remove('g');
+            item.classList.add('b');
+        }
+    });    
     nextWord = confirmClickAlgorithm(currentWord, inputBYG);
     let idArray = ['first','second','third','fourth','fifth'];
     for (let i = 0; i < idArray.length; i++){
@@ -88,4 +87,3 @@ function confirmEvent(){
     round = +round + 1;
     text.textContent = text.textContent.substring(0,text.textContent.length -1) + round;
 }
-
