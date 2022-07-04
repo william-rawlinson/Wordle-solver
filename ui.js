@@ -73,6 +73,8 @@ function confirmEvent(){
             inputBYG = inputBYG + 'g';
         }
     });    
+    let text = document.querySelector('.turnCounter');
+    let round = text.textContent[text.textContent.length -1];
     if (inputBYG!=='ggggg'){
         letterButtons.forEach((item) => {
             if (item.classList.contains('y')){
@@ -88,9 +90,7 @@ function confirmEvent(){
         for (let i = 0; i < idArray.length; i++){
             let elementToChange = document.querySelector(`#${idArray[i]}`);
             elementToChange.textContent = nextWord[i];
-        }
-        let text = document.querySelector('.turnCounter');
-        let round = text.textContent[text.textContent.length -1];
+        };
         round = +round + 1;
         text.textContent = text.textContent.substring(0,text.textContent.length -1) + round;
     } else {
@@ -100,5 +100,7 @@ function confirmEvent(){
         replayButton.textContent = 'Replay?';
         replayButton.classList.add('replay');
         content.appendChild(replayButton);
+        text.textContent = `Congratulations you got the solution in ${round} guesses!`
+        bannerText.textContent = "Click 'Replay' to try again!";
     }
 }
