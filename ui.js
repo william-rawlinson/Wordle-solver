@@ -15,6 +15,7 @@ function onStart(){
     const paragraph = document.createElement('p');
         paragraph.textContent = 'Guess number 1';
         paragraph.classList.add('turnCounter');
+        paragraph.classList.add('paragraph');
         content.appendChild(paragraph);
 
     const buttonContainer = document.createElement('div');
