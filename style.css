@@ -9,19 +9,19 @@ body {
     background-color:#1F2937;
     color: white;
     flex: 1 1 10vh;
-    font-size: 2vw;
+    font-size: 2.5vmax;
 }
 
 .banner {
     background-color:aquamarine;
     flex: 1 1 10vh;
-    font-size: 1.5vw;
+    font-size: 2vmax;
     padding: 0px 2vw 0px 2vw;
 }
 
 .content {
     flex: 1 1 60vh;
-    font-size: 2vw;
+    font-size: 2vmax;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -36,9 +36,9 @@ body {
 }
 
 .letter {
-    height: 15vh;
-    width: 15vh;
-    font-size: 4vw;
+    height: 10vmax;
+    width: 10vmax;
+    font-size: 4vmax;
     border-radius: 0.5vw;
     border-width: 0.2vw;
     margin: 0px 0.5vw 0px 0.5vw
@@ -46,14 +46,14 @@ body {
 
 .confirm, .replay {
     margin-top: 5vh;
-    font-size: 2vw;
+    font-size: 2vmax;
     border-radius: 0.5vw;
     border-width: 0.2vw;
     padding: 0 1vw 0 1vw;
 }  
 
 .start {
-    font-size: 2vw;
+    font-size: 2vmax;
     border-radius: 0.5vw;
     border-width: 0.2vw;
     padding: 0 1vw 0 1vw;

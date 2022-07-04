@@ -3,6 +3,7 @@ let startButton = document.querySelector('.start');
 const bannerText = document.querySelector('.bannerText');
 const bannerTextString = 'Please use the word displayed below as your guess in the Wordle app. Enter the tile colors Wordle provides by clicking on the letters' +
 ' below. When you are happy, click Confirm.'; 
+let round = 1;
 
 startButton.addEventListener('click',onStart);
 
@@ -73,7 +74,7 @@ function confirmEvent(){
         }
     });    
     let text = document.querySelector('.turnCounter');
-    let round = text.textContent[text.textContent.length -1];
+    round = text.textContent[text.textContent.length -1];
     if (inputBYG!=='ggggg'){
         letterButtons.forEach((item) => {
             if (item.classList.contains('y')){
@@ -84,11 +85,11 @@ function confirmEvent(){
                 item.classList.add('b');
             }
         });    
-        nextWord = confirmClickAlgorithm(currentWord, inputBYG);
+        nextWord = confirmClickAlgorithm(currentWord, inputBYG,round);
         let idArray = ['first','second','third','fourth','fifth'];
         for (let i = 0; i < idArray.length; i++){
             let elementToChange = document.querySelector(`#${idArray[i]}`);
-            elementToChange.textContent = nextWord[i];
+            elementToChange.textContent = nextWord[i].toUpperCase();
         };
         round = +round + 1;
         text.textContent = text.textContent.substring(0,text.textContent.length -1) + round;
