@@ -1,5 +1,5 @@
 const content = document.querySelector('.content');
-const startButton = document.querySelector('.start');
+let startButton = document.querySelector('.start');
 const bannerText = document.querySelector('.bannerText');
 const bannerTextString = 'Please use the word displayed below as your guess in the Wordle app. Enter the tile colors Wordle provides by clicking on the letters' +
 ' below. When you are happy, click Confirm.'; 
@@ -8,7 +8,7 @@ startButton.addEventListener('click',onStart);
 
 function onStart(){
     bannerText.textContent = bannerTextString;
-
+    
     content.removeChild(startButton);
 
     const paragraph = document.createElement('p');
@@ -57,7 +57,6 @@ function colorChange(event){
 }
 
 function confirmEvent(){
-    
     let currentWord = '';
     const letterButtons = document.querySelectorAll('.letter');
     letterButtons.forEach((item) => {
@@ -99,8 +98,24 @@ function confirmEvent(){
         const replayButton = document.createElement('button');
         replayButton.textContent = 'Replay?';
         replayButton.classList.add('replay');
+        replayButton.addEventListener('click', onReplay);
         content.appendChild(replayButton);
         text.textContent = `Congratulations you got the solution in ${round} guesses!`
         bannerText.textContent = "Click 'Replay' to try again!";
     }
+}
+
+function onReplay() {
+    const replayButton = document.querySelector('.replay');
+    const buttonContainer = document.querySelector('.buttonContainer');
+    const paragraph = document.querySelector('.turnCounter');
+    content.removeChild(replayButton);
+    content.removeChild(paragraph);
+    content.removeChild(buttonContainer);
+    bannerText.textContent = "Please click 'Start' to begin solving today's Wordle. Ensure you have the Wordle app open.";
+    startButton = document.createElement('button');
+    startButton.classList.add('start');
+    startButton.textContent = 'Start';
+    startButton.addEventListener('click',onStart);
+    content.appendChild(startButton);
 }
