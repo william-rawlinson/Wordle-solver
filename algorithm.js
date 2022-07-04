@@ -1,8 +1,8 @@
-function onConfirmClick(outputGuess,inputBYG){
+function onConfirmClick(currentWord,inputBYG){
     let tilePermutations = getTilePermutations();
-    possibleWords = getPossibleWords(outputGuess,inputBYG,possibleWords);
-    outputGuess = getNextWord(possibleWords, tilePermutations);
-    let returnArray = [outputGuess, possibleWords];
+    possibleWords = getPossibleWords(currentWord,inputBYG,possibleWords);
+    let nextWord = getNextWord(possibleWords, tilePermutations);
+    let returnArray = [nextWord, possibleWords];
     return returnArray;
 }
 
@@ -60,10 +60,10 @@ function getNumConsistentWords(testWord, currentTilePermutation, possibleWords){
     return runningConsistentWords
 }
 
-function getPossibleWords(outputGuess, inputBYG,possibleWords){ // To output list of remaining possible words after a guess and user inputted tile colours
+function getPossibleWords(currentWord, inputBYG,possibleWords){ // To output list of remaining possible words after a guess and user inputted tile colours
     let newPossibleWords = [];
     for (let i = 0; i < possibleWords.length; i++){
-        if (isConsistent(outputGuess, inputBYG, possibleWords[i])==1){
+        if (isConsistent(currentWord, inputBYG, possibleWords[i])==1){
             newPossibleWords.push(possibleWords[i]);
         }
     }

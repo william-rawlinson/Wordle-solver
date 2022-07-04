@@ -57,13 +57,12 @@ function colorChange(event){
 }
 
 function confirmEvent(){
-    let outputGuess = '';
+    let currentWord = '';
     const letters = document.querySelectorAll('.letter');
     letters.forEach((letter) => {
-        outputGuess = outputGuess + letter.textContent;
+        currentWord = currentWord + letter.textContent;
     })
-    outputGuess = outputGuess.toLowerCase();
-    console.log(outputGuess);
+    currentWord = currentWord.toLowerCase();
     let inputBYG = '';
     letters.forEach((letter) => {
             if (letter.classList.contains('b')){
@@ -78,12 +77,11 @@ function confirmEvent(){
                 letter.classList.add('b');
             }
     })
-    console.log(onConfirmClick(outputGuess, inputBYG)[0]);
-    outputGuess = onConfirmClick(outputGuess, inputBYG)[0];
+    nextWord = onConfirmClick(currentWord, inputBYG)[0];
     let idArray = ['first','second','third','fourth','fifth'];
     for (let i = 0; i < idArray.length; i++){
         let elementToChange = document.querySelector(`#${idArray[i]}`);
-        elementToChange.textContent = outputGuess[i];
+        elementToChange.textContent = nextWord[i];
     }
     let text = document.querySelector('.turnCounter');
     let round = text.textContent[text.textContent.length -1];
