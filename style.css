@@ -44,7 +44,7 @@ body {
     margin: 0px 0.5vw 0px 0.5vw
 }
 
-.confirm {
+.confirm, .replay {
     margin-top: 5vh;
     font-size: 2vw;
     border-radius: 0.5vw;

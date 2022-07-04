@@ -57,6 +57,7 @@ function colorChange(event){
 }
 
 function confirmEvent(){
+    
     let currentWord = '';
     const letterButtons = document.querySelectorAll('.letter');
     letterButtons.forEach((item) => {
@@ -76,14 +77,23 @@ function confirmEvent(){
             item.classList.add('b');
         }
     });    
-    nextWord = confirmClickAlgorithm(currentWord, inputBYG);
-    let idArray = ['first','second','third','fourth','fifth'];
-    for (let i = 0; i < idArray.length; i++){
-        let elementToChange = document.querySelector(`#${idArray[i]}`);
-        elementToChange.textContent = nextWord[i];
+    if (inputBYG!=='ggggg'){
+        nextWord = confirmClickAlgorithm(currentWord, inputBYG);
+        let idArray = ['first','second','third','fourth','fifth'];
+        for (let i = 0; i < idArray.length; i++){
+            let elementToChange = document.querySelector(`#${idArray[i]}`);
+            elementToChange.textContent = nextWord[i];
+        }
+        let text = document.querySelector('.turnCounter');
+        let round = text.textContent[text.textContent.length -1];
+        round = +round + 1;
+        text.textContent = text.textContent.substring(0,text.textContent.length -1) + round;
+    } else {
+        const confirm = document.querySelector('.confirm');
+        content.removeChild(confirm);
+        const replayButton = document.createElement('button');
+        replayButton.textContent = 'Replay?';
+        replayButton.classList.add('replay');
+        content.appendChild(replayButton);
     }
-    let text = document.querySelector('.turnCounter');
-    let round = text.textContent[text.textContent.length -1];
-    round = +round + 1;
-    text.textContent = text.textContent.substring(0,text.textContent.length -1) + round;
 }
