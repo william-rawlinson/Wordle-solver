@@ -126,6 +126,8 @@ function onReplay() {
         content.removeChild(buttonContainer);
     const paragraph = document.querySelector('.turnCounter');
         content.removeChild(paragraph);
+    const warning = document.querySelector('.warning');
+        content.removeChild(warning);
     bannerText.textContent = "Please click 'Start' to begin solving today's Wordle. Ensure you have the Wordle app open.";
     startButton = document.createElement('button');
         startButton.classList.add('start');
