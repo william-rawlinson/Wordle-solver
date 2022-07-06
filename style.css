@@ -86,13 +86,3 @@ body {
     font-weight: 600;
 }
 
-.progress100 {
-    width: 50rem;
-    background-color: grey;
-}
-
-.currentProgress {
-    width: 0.5rem;
-    height: 0.7rem;
-    background-color: green;
-}
