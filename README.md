@@ -26,10 +26,10 @@ Version 1 of my solver has performed very well. I've used the solver 4 times, an
 
 Variable definitions 
 
-currentWord, a string, stores the current guess that was suggested by the solver.  
-nextWord, a string, stores the next guess that will be suggested to the user. 
-inputBYG, a string, stores the tile colours returned by Wordle for the current guess as a 5 letter string of form 'ybgyb'.  
-possibleWords, an array, stores all of the possible solution words, given tile information that has been returned by Wordle. The initial value is all of the five letter words in the English language, this is reduced each turn to hold only words that are consistent with the tile information that has been returned.
+- currentWord, a string, stores the current guess that was suggested by the solver.  
+- nextWord, a string, stores the next guess that will be suggested to the user. 
+- inputBYG, a string, stores the tile colours returned by Wordle for the current guess as a 5 letter string of form 'ybgyb'.  
+- possibleWords, an array, stores all of the possible solution words, given tile information that has been returned by Wordle. The initial value is all of the five letter words in the English language, this is reduced each turn to hold only words that are consistent with the tile information that has been returned.
 
 ## Plan - getNextWord()
 
