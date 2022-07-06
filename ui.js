@@ -1,19 +1,22 @@
+
+//Variables Start
 const content = document.querySelector('.content');
 let startButton = document.querySelector('.start');
 const bannerText = document.querySelector('.bannerText');
 const bannerTextString = 'Please use the word displayed below as your guess in the Wordle app. Enter the tile colors Wordle provides by clicking on the letters' +
 ' below. When you are happy, click Confirm.'; 
 let round = 1;
+//Variables End
 
 startButton.addEventListener('click',onStart);
 
 function onStart(){
     bannerText.textContent = bannerTextString;
-    
+
     content.removeChild(startButton);
 
     const warning = document .createElement('div');
-        warning.textContent = 'Please note: for this version results could take up to 30 seconds to appear after Confirm is clicked.'
+        warning.textContent = 'Please note: for version 1.0 results could take up to 30 seconds to appear after Confirm is clicked.'
         warning.classList.add('warning');
         content.appendChild(warning);
 
@@ -65,31 +68,35 @@ function colorChange(event){
 
 function confirmEvent(){
     let currentWord = '';
+
     const letterButtons = document.querySelectorAll('.letter');
-    letterButtons.forEach((item) => {
-        currentWord = currentWord + item.textContent.toLowerCase();
-    });
+        letterButtons.forEach((item) => {
+            currentWord = currentWord + item.textContent.toLowerCase();
+        });
+
     let inputBYG = '';
-    letterButtons.forEach((item) => {
-        if (item.classList.contains('b')){
-            inputBYG = inputBYG + 'b';
-        } else if (item.classList.contains('y')){
-            inputBYG = inputBYG + 'y';
-        } else if (item.classList.contains('g')){
-            inputBYG = inputBYG + 'g';
-        }
-    });    
+        letterButtons.forEach((item) => {
+            if (item.classList.contains('b')){
+                inputBYG = inputBYG + 'b';
+            } else if (item.classList.contains('y')){
+                inputBYG = inputBYG + 'y';
+            } else if (item.classList.contains('g')){
+                inputBYG = inputBYG + 'g';
+            }
+        });    
+
     let text = document.querySelector('.turnCounter');
     round = text.textContent[text.textContent.length -1];
+    
     if (inputBYG!=='ggggg'){
         letterButtons.forEach((item) => {
-            if (item.classList.contains('y')){
-                item.classList.remove('y');
-                item.classList.add('b');
-            } else if (item.classList.contains('g')){
-                item.classList.remove('g');
-                item.classList.add('b');
-            }
+        if (item.classList.contains('y')){
+            item.classList.remove('y');
+            item.classList.add('b');
+        } else if (item.classList.contains('g')){
+            item.classList.remove('g');
+            item.classList.add('b');
+        }
         });    
         nextWord = confirmClickAlgorithm(currentWord, inputBYG,round);
         let idArray = ['first','second','third','fourth','fifth'];
@@ -101,12 +108,12 @@ function confirmEvent(){
         text.textContent = text.textContent.substring(0,text.textContent.length -1) + round;
     } else {
         const confirm = document.querySelector('.confirm');
-        content.removeChild(confirm);
+            content.removeChild(confirm);
         const replayButton = document.createElement('button');
-        replayButton.textContent = 'Replay?';
-        replayButton.classList.add('replay');
-        replayButton.addEventListener('click', onReplay);
-        content.appendChild(replayButton);
+            replayButton.textContent = 'Replay?';
+            replayButton.classList.add('replay');
+            replayButton.addEventListener('click', onReplay);
+            content.appendChild(replayButton);
         text.textContent = `Congratulations you got the solution in ${round} guesses!`
         bannerText.textContent = "Click 'Replay' to try again!";
     }
@@ -114,15 +121,15 @@ function confirmEvent(){
 
 function onReplay() {
     const replayButton = document.querySelector('.replay');
+        content.removeChild(replayButton);
     const buttonContainer = document.querySelector('.buttonContainer');
+        content.removeChild(buttonContainer);
     const paragraph = document.querySelector('.turnCounter');
-    content.removeChild(replayButton);
-    content.removeChild(paragraph);
-    content.removeChild(buttonContainer);
+        content.removeChild(paragraph);
     bannerText.textContent = "Please click 'Start' to begin solving today's Wordle. Ensure you have the Wordle app open.";
     startButton = document.createElement('button');
-    startButton.classList.add('start');
-    startButton.textContent = 'Start';
-    startButton.addEventListener('click',onStart);
-    content.appendChild(startButton);
+        startButton.classList.add('start');
+        startButton.textContent = 'Start';
+        startButton.addEventListener('click',onStart);
+        content.appendChild(startButton);
 }

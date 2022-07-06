@@ -1,6 +1,6 @@
 # My Wordle Solver
 
-I built an application to solve the popular puzzle game 'Wordle' in JavaScript. This was to test problem solving strategies I've learned in the Project Odin Foundation Course.
+I built an application to solve the popular puzzle game 'Wordle' in JavaScript. This was to test problem solving strategies and basic UI functionality that I've learnt in the Project Odin Foundation Course. The current version of the application is v1.0, for this version I have not yet considered optimisation.
 
 ## What is 'Wordle'?
 
@@ -14,54 +14,26 @@ I wanted to create an effective solver that was close to an optimal strategy. Af
 
     My solver will minimise the expected number of possible solution words after each guess has been made
 
-The reasoning behind this principle is that at the start of each turn, each of the remaining possible words are equally likely to be the solution. Therefore, to have the best chance of guessing the solution, the solver should minimise the number of remaining possible words after each guess. As a simplification, I chose to rely on 'one-turn thinking'. This means that the solver would not try and think more than one turn ahead when choosing the next word. For version 1 of the solver, I aimed to produce a function that the user could interact with in a web browser's developer tool console. For future versions, I aim to add a UI so that the user can interact with the solver in a web browser.
+The reasoning behind this principle is that at the start of each turn, each of the remaining possible words are equally likely to be the solution. Therefore, to have the best chance of guessing the solution, the solver should minimise the number of remaining possible words after each guess. As a simplification, I chose to rely on 'one-turn thinking'. This means that the solver would not try and think more than one turn ahead when choosing the next word. 
+
+For version 1.0 of the solver, I aimed to produce an application that the user could interact with in a web browser. For future versions, I will optimise the solution algorithms and add a progress bar to visualise how long the algorithms have left to run. I attempted to add this progress bar for v1.0, but was not able to both return the next guess word and update the DOM whilst my algorithms are running.
 
 ## Results
 
 Version 1 of my solver has performed very well. I've used the solver 4 times, and have found the solution in 2 guesses, 3 guesses, 4 guesses, and 3 guesses, respectively. My solver has identified the word 'lares' as the optimal first guess. This is an obscure word referring to guardian deities in ancient Roman religion.
 
-
-
 # Working 
 
-## Basic Plan - Version 1
+Variable definitions 
 
-For version 1 of the solver, the solver will be a function 'wordleSolver()' that the user can interact with in a web browser's developer tool console. I won't attempt any optimisation and see if the solver runs in manageable times. The solver will work as follows (top-level):
-
-1. wordleSolver() will alert the user as to what they should enter for their first guess. For the first guess this will be the same every time, and so the first guess will be hard-coded rather than calculated inside the function  
-
-2. Wordle will return coloured tiles once the first guess is entered  
-
-3. wordleSolver() will prompt the user to input what colour each of the 5 tiles were given (the user will enter a string of the form 'bybgg' where b stands for blank, y stands for yellow, g stands for green)  
-
-4. The solver will calculate the optimal second guess using a function getNextWord(), based on the word that was entered as first guess, and the tile colours inputted by the user. This will use the principle of minimising the expected number of possible solution words after the guess has been made  
-
-5. The solver will alert the user as to what they should enter for their second guess  
-
-6. The steps will repeat until either the user enters 'ggggg' which signifies they have won the game, or until 6 guesses have been returned (at which point the user is out of guesses)  
-
-## Algorithm - worldeSolver()
-
-Variables  
-
-outputGuess = '', stores the current guess suggested by the solver as a string  
-inputBYG = '', stores the tile colours returned by Wordle for the current guess as a 5 letter string of form 'ybgyb'  
-possibleWords, array that stores the current valid list of guesses (initial value is the full valid list of guesses, this is reduced each turn to hold only words that could be the solution, given the guesses and tile information that have been provided)  
-
-Algorithm  
-    
-For loop, initialize i = 1, condition i < 7, increment + 1  
-if i = 1, output guess is set equal to the optimal first guess (hard-coded)  
-else, outputGuess is set equal to getNextWord(possibleWords,....)  
-alert user to enter outputGuess into Wordle   
-propmt user for the tile colours returned by Wordle. inputBYG is set equal to the prompt (takes form 'ybgyb'). Prompt handles incorrect entry (asks user to re-enter until form is correct) and upper case (converts to lower case)  
-if inputBYG is equal to 'ggggg' then returns message 'congratulations' and exits loop, the user has won  
-else, possibleWords is set equal to getPossibleWords(outputGuess, inputBYG, possibleWords, ....), this removes words from the current possibleWords array that were not consistent with the prior guess and tile colours  
-End of loop  
+currentWord, a string, stores the current guess that was suggested by the solver.  
+nextWord, a string, stores the next guess that will be suggested to the user. 
+inputBYG, a string, stores the tile colours returned by Wordle for the current guess as a 5 letter string of form 'ybgyb'.  
+possibleWords, an array, stores all of the possible solution words, given tile information that has been returned by Wordle. The initial value is all of the five letter words in the English language, this is reduced each turn to hold only words that are consistent with the tile information that has been returned.
 
 ## Plan - getNextWord()
 
-As specified above, the principle behind this function should be to minimise the expected number of possible solution words after the guess has been made.  
+This is a function that generates nextWord based on possibleWords. As specified above, the principle behind this function should be to minimise the expected number of possible solution words after the guess has been made.  
 
 A resource intensive method could work based on the following. Each guess has a range of tile colour outcomes, symbolised by a 5 letter combination (i.e. 'ybbbb' is the outcome that only the first letter of the guess is in the solution, and it's in the wrong place). Given a guess word, each of these tile colour outcomes has a probability, 'x/y', which can be calculated from the number of words in possibleWords that are consistent with that tile colour outcome and that guess 'x', divided by the total number of words in possibleWords 'y'. Each outcome also has an associated number of possible words remaining following the turn. This is just equal to 'x'. Therefore, the contribution to the total expected number of remaining possible words for a given guess word, and a specific tile outcome, is 'x^2/y'. There are z possible tile colour outcomes for each guess. This is the number of permutations of 'bygyb' where each character can take 'b', 'y', 'g'. Therefore, z = 3^5 = 243. The function could try each word in possibleWords as a guess. For each of these words, the function could calculate the expected number of possible solution words after the guess has been made by summing over the 'x^2/y' contributions from each of the 243 possilbe tile colour outcomes. In this way, the guess word with the lowest expected number of possible solution words after the guess has been made can be identified. This would be the next outputGuess, and would be returned by getNextWord() as a string.
 
