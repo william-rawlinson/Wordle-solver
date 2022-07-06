@@ -12,6 +12,11 @@ function onStart(){
     
     content.removeChild(startButton);
 
+    const warning = document .createElement('div');
+        warning.textContent = 'Please note: for this version results could take up to 30 seconds to appear after Confirm is clicked.'
+        warning.classList.add('warning');
+        content.appendChild(warning);
+
     const paragraph = document.createElement('p');
         paragraph.textContent = 'Guess number 1';
         paragraph.classList.add('turnCounter');
