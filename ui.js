@@ -3,8 +3,8 @@
 const content = document.querySelector('.content');
 let startButton = document.querySelector('.start');
 const bannerText = document.querySelector('.bannerText');
-const bannerTextString = 'Please use the word displayed below as your guess in the Wordle app. Enter the tile colors Wordle provides by clicking on the letters' +
-' below. When you are happy, click Confirm.'; 
+const bannerTextString = 'Please use the five-letter word displayed below as your guess in the Wordle app. Then enter the colors Wordle provides by clicking on the letter' +
+' tiles below. When you are happy, click Confirm and the next suggested word will appear.'; 
 let round = 1;
 //Variables End
 
@@ -16,7 +16,7 @@ function onStart(){
     content.removeChild(startButton);
 
     const warning = document .createElement('div');
-        warning.textContent = 'Please note: for version 1.0 results could take up to 30 seconds to appear after Confirm is clicked.'
+        warning.textContent = 'Please note: for version 1.0 the next suggested word could take up to 5 seconds to appear after Confirm is clicked.'
         warning.classList.add('warning');
         content.appendChild(warning);
 
